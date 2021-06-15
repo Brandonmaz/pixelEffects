@@ -22,7 +22,10 @@ myImage.addEventListener("load", () => {
       const green = pixels.data[y * 4 * pixels.width + (x * 4 + 1)];
       const blue = pixels.data[y * 4 * pixels.width + (x * 4 + 2)];
       const brightness = calculateRelativeBrightness(red, green, blue);
-      const cell = [(cellBrightness = brightness)];
+      const cell = [
+        (cellBrightness = brightness),
+        (cellColor = "rgb(" + red + "," + green + "," + blue + ")"),
+      ];
       row.push(cell);
     }
     mappedImage.push(row);
@@ -42,25 +45,35 @@ myImage.addEventListener("load", () => {
       this.y = 0;
       this.speed = 0;
       this.velocity = Math.random() * 0.5;
-      this.size = Math.random() * 0.25 + 0.5;
+      this.size = Math.random() * 0.75 + 0.5;
       this.position1 = Math.floor(this.y);
       this.position2 = Math.floor(this.x);
+      this.angle = 0;
     }
     update() {
       this.position1 = Math.floor(this.y);
       this.position2 = Math.floor(this.x);
       this.speed = mappedImage[this.position1][this.position2][0];
       let movement = 2.5 - this.speed + this.velocity;
+      this.angle++;
 
-      this.y += movement;
+      // this moves the direction of the rain with the * or / or Math.sin(this.angle)
+      this.y += movement + 0.5; // controls y angle and speed
+      this.x += movement + 0.5; //controls x angle and speed
+
       if (this.y >= canvas.height) {
         this.y = 0;
         this.x = Math.random() * canvas.width;
       }
+      if (this.x >= canvas.width) {
+        this.x = 0;
+        this.y = Math.random() * canvas.height;
+      }
     }
     draw() {
       ctx.beginPath();
-      ctx.fillStyle = "white";
+      // ctx.fillStyle = 'white'
+      ctx.fillStyle = mappedImage[this.position1][this.position2][1];
       ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
       ctx.fill();
     }
